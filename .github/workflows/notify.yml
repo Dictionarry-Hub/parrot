@@ -15,19 +15,20 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send to Parrot
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: |
-          curl -X POST $WEBHOOK_URL \
-          -H "Content-Type: application/json" \
-          -d '{
-            "event": "${{ github.event_name }}",
-            "ref": "${{ github.ref }}",
-            "repository": "${{ github.repository }}",
-            "commit": {
-              "message": "${{ github.event.head_commit.message }}",
-              "author": "${{ github.event.head_commit.author.name }}",
-              "url": "${{ github.event.head_commit.url }}"
-            }
-          }'
+    - name: Send to Parrot
+            env:
+              WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+            run: |
+              MESSAGE=$(echo "${{ github.event.head_commit.message }}" | jq -R -s .)
+              curl -X POST $WEBHOOK_URL \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"event\": \"${{ github.event_name }}\",
+                \"ref\": \"${{ github.ref }}\",
+                \"repository\": \"${{ github.repository }}\",
+                \"commit\": {
+                  \"message\": $MESSAGE,
+                  \"author\": \"${{ github.event.head_commit.author.name }}\",
+                  \"url\": \"${{ github.event.head_commit.url }}\"
+                }
+              }"
