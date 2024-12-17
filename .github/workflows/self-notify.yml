@@ -1,0 +1,9 @@
+name: Self Notify
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  notify:
+    uses: ./.github/workflows/notify.yml@${{ github.ref }}
