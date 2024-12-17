@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - "**"
-
 jobs:
   notify:
-    uses: ./.github/workflows/notify.yml@${{ github.ref }}
+    uses: ./.github/workflows/notify.yml
