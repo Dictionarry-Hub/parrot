@@ -41,7 +41,6 @@ FUNNY_PARROT_MESSAGES = [
     "I dreamed of automating everything. Now I spend my weekends fixing regex errors in Sonarr 😩🛠️",
 ]
 
-
 @app.post("/parrot/notify")
 async def receive_notification(request: Request):
     data = await request.json()
@@ -63,6 +62,11 @@ async def receive_notification(request: Request):
         # Random footer message
         footer_message = random.choice(FUNNY_PARROT_MESSAGES)
 
+        # Ensure repository URL is properly built
+        repo_url = data.get('repository_url')
+        if not repo_url and repo_name:
+            repo_url = f"https://github.com/{repo_name}"
+
         # Improved embed
         embed = discord.Embed(
             description=(f"**{changes_message}**\n\n"
@@ -71,7 +75,7 @@ async def receive_notification(request: Request):
         )
         embed.add_field(
             name="Repository",
-            value=f"[{repo_name}]({data.get('repository_url', '#')})",
+            value=f"[{repo_name}]({repo_url})",
             inline=True)
         embed.add_field(name="Author", value=f"`{author}`", inline=True)
         embed.add_field(name="Commit",
