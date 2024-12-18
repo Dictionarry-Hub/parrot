@@ -1,0 +1,21 @@
+version: "3"
+services:
+  parrot:
+    build: .
+    container_name: parrot-bot
+    restart: always
+    ports:
+      - "9229:9229"
+    env_file:
+      - .env
+    environment:
+      - DISCORD_CHANNEL_ID
+      - BOT_TOKEN
+    volumes:
+      - .:/app
+    networks:
+      - parrot-net
+
+networks:
+  parrot-net:
+    driver: bridge
