@@ -41,6 +41,7 @@ FUNNY_PARROT_MESSAGES = [
     "I dreamed of automating everything. Now I spend my weekends fixing regex errors in Sonarr 😩🛠️",
 ]
 
+
 @app.post("/parrot/notify")
 async def receive_notification(request: Request):
     data = await request.json()
@@ -53,6 +54,8 @@ async def receive_notification(request: Request):
     if commit:
         message = commit.get('message')
         author = commit.get('author')
+        print(f"Real author: {author}")
+        author = "santiagosayshey"
         url = commit.get('url')
         repo_name = data.get('repository')
         commit_hash = url.split("/")[-1][:10] if url else "??????????"
@@ -73,10 +76,9 @@ async def receive_notification(request: Request):
                          f"**Commit Message**\n{message}"),
             color=0x3BA55D  # Subtle green
         )
-        embed.add_field(
-            name="Repository",
-            value=f"[{repo_name}]({repo_url})",
-            inline=True)
+        embed.add_field(name="Repository",
+                        value=f"[{repo_name}]({repo_url})",
+                        inline=True)
         embed.add_field(name="Author", value=f"`{author}`", inline=True)
         embed.add_field(name="Commit",
                         value=f"[`{commit_hash}`]({url})",
