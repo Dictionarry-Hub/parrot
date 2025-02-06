@@ -54,8 +54,9 @@ async def receive_notification(request: Request):
     if commit:
         message = commit.get('message')
         author = commit.get('author')
-        print(f"Real author: {author}")
-        author = "santiagosayshey"
+        if author == 'Sam Chau':
+            author = "santiagosayshey"
+
         url = commit.get('url')
         repo_name = data.get('repository')
         commit_hash = url.split("/")[-1][:10] if url else "??????????"
