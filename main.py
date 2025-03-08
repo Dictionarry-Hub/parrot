@@ -43,7 +43,8 @@ async def health():
     return {"status": "healthy"}
 
 
-# Global reference to the bot process
+# Global reference to the bot instance and process
+bot = None
 bot_process = None
 
 
@@ -59,9 +60,27 @@ def start_bot():
     asyncio.run(bot_module.main(bot))
 
 
+def setup_app():
+    """Setup the app before running with uvicorn"""
+    # Don't start the bot here, just create it
+    from bot import ParrotBot
+    import discord
+
+    # Create the bot
+    bot = ParrotBot()
+
+    # Initialize just the HTTP client
+    bot.http = discord.http.HTTPClient(None)
+
+    # Store in app state
+    app.state.bot = bot
+
+    return app
+
+
 def main():
     """Main entry point for the API server and bot"""
-    global bot_process
+    global bot_process, bot
 
     # Start the bot in a separate process
     bot_process = multiprocessing.Process(target=start_bot)
@@ -69,13 +88,19 @@ def main():
     bot_process.start()
 
     # Start the API server
-    uvicorn.run(
-        "main:app",
-        host=API_HOST,
-        port=API_PORT,
-        reload=API_RELOAD,
-        reload_dirs=["app"] if API_RELOAD else None,
-    )
+    if API_RELOAD:
+        # When using reload, we need to use the string reference
+        uvicorn.run("main:setup_app",
+                    host=API_HOST,
+                    port=API_PORT,
+                    reload=API_RELOAD,
+                    reload_dirs=["app"] if API_RELOAD else None,
+                    factory=True)
+    else:
+        # When not using reload, we can initialize directly
+        setup_app()
+        uvicorn.run(app, host=API_HOST, port=API_PORT)
+
     return 0
 
 

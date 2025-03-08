@@ -1,0 +1,54 @@
+name: Self Notify
+
+on:
+  push:
+    branches:
+      - v1
+
+jobs:
+  notify-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get commit information
+        id: commit
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const commit = context.payload.head_commit;
+            const branch = context.ref.replace('refs/heads/', '');
+
+            if (!commit) {
+              core.setFailed('No commit information found in the event payload');
+              return;
+            }
+
+            // Get commit metadata
+            const commitData = {
+              repository: `${owner}/${repo}`,
+              branch: branch,
+              commit_hash: commit.id,
+              message: commit.message.split('\n')[0], // First line of commit message
+              body: commit.message.includes('\n\n') ? commit.message.substring(commit.message.indexOf('\n\n') + 2) : null,
+              url: commit.url,
+              created_at: commit.timestamp,
+              author: {
+                name: commit.author.name,
+                email: commit.author.email,
+                username: commit.author.username
+              },
+              changed_files: commit.added.length + commit.modified.length + commit.removed.length,
+              additions: null,
+              deletions: null
+            };
+
+            core.setOutput('commit_data', JSON.stringify(commitData));
+
+      - name: Send notification to Parrot API
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: "${{ secrets.WEBHOOK_URL }}/notify/commit"
+          method: "POST"
+          contentType: "application/json"
+          data: ${{ steps.commit.outputs.commit_data }}
+          timeout: 5000
