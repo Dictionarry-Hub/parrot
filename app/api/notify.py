@@ -165,47 +165,6 @@ async def notify_release(notification: ReleaseNotification, request: Request):
                             detail=f"Failed to send notification: {str(e)}")
 
 
-from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
-from typing import Optional, List
-from datetime import datetime
-import discord
-import logging
-import traceback
-import asyncio
-from app.config.settings import get_channel_id, DISCORD_TOKEN
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("notify_api")
-
-router = APIRouter(
-    prefix="/notify",
-    tags=["notifications"],
-)
-
-
-class Author(BaseModel):
-    name: str
-    email: Optional[str] = None
-    username: Optional[str] = None
-    url: Optional[str] = None
-
-
-class CommitNotification(BaseModel):
-    repository: str
-    branch: str
-    commit_hash: str
-    message: str
-    body: Optional[str] = None
-    url: str
-    created_at: datetime
-    author: Author
-    changed_files: Optional[int] = None
-    additions: Optional[int] = None
-    deletions: Optional[int] = None
-
-
 @router.post("/commit")
 async def notify_commit(notification: CommitNotification, request: Request):
     """
