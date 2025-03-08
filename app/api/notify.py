@@ -107,8 +107,14 @@ async def notify_release(notification: ReleaseNotification, request: Request):
                         value=f"[`{display_version}`]({notification.url})",
                         inline=True)
 
-        # For now, send to the test channel as specified
-        channel = "test"  # Use the test channel from your .env file
+        # Select the appropriate channel based on DEBUG mode
+        from app.config.settings import DEBUG
+        if DEBUG:
+            channel = "test"
+            logger.debug(f"Debug mode enabled, using test channel")
+        else:
+            channel = "announcements"
+            logger.debug(f"Production mode, using announcements channel")
 
         # Get the channel ID
         logger.debug(f"Getting channel ID for '{channel}'")
@@ -147,7 +153,7 @@ async def notify_release(notification: ReleaseNotification, request: Request):
             # Send a visually distinct embed that will stand out
             await discord_channel.send(embed=embed)
             logger.info(
-                f"Successfully sent notification for {notification.repository} {notification.version}"
+                f"Successfully sent notification for {notification.repository} {notification.version} to {channel} channel"
             )
         except Exception as e:
             logger.error(f"Error sending message: {str(e)}")
@@ -221,8 +227,14 @@ async def notify_commit(notification: CommitNotification, request: Request):
                         value=f"[`{short_hash}`]({commit_url})",
                         inline=True)
 
-        # For now, send to the test channel as specified
-        channel = "test"  # Use the test channel from your .env file
+        # Select the appropriate channel based on DEBUG mode
+        from app.config.settings import DEBUG
+        if DEBUG:
+            channel = "test"
+            logger.debug(f"Debug mode enabled, using test channel")
+        else:
+            channel = "announcements"
+            logger.debug(f"Production mode, using announcements channel")
 
         # Get the channel ID
         logger.debug(f"Getting channel ID for '{channel}'")
@@ -261,7 +273,7 @@ async def notify_commit(notification: CommitNotification, request: Request):
             # Send a visually distinct embed that will stand out
             await discord_channel.send(embed=embed)
             logger.info(
-                f"Successfully sent notification for {notification.repository} commit {short_hash}"
+                f"Successfully sent notification for {notification.repository} commit {short_hash} to {channel} channel"
             )
         except Exception as e:
             logger.error(f"Error sending message: {str(e)}")
