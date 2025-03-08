@@ -3,7 +3,7 @@ name: Notify Release
 on:
   workflow_call:
     secrets:
-      WEBHOOK_URL:
+      PARROT_URL:
         required: true
 
 jobs:
@@ -47,7 +47,7 @@ jobs:
       - name: Send notification to Parrot API
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "${{ secrets.WEBHOOK_URL }}/notify/release"
+          url: "${{ secrets.PARROT_URL }}/notify/release"
           method: "POST"
           contentType: "application/json"
           data: ${{ steps.release.outputs.release_data }}

@@ -3,7 +3,7 @@ name: Notify Commit
 on:
   workflow_call:
     secrets:
-      WEBHOOK_URL:
+      PARROT_URL:
         required: true
 
 jobs:
@@ -48,7 +48,7 @@ jobs:
       - name: Send notification to Parrot API
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "${{ secrets.WEBHOOK_URL }}/notify/commit"
+          url: "${{ secrets.PARROT_URL }}/notify/commit"
           method: "POST"
           contentType: "application/json"
           data: ${{ steps.commit.outputs.commit_data }}
