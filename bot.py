@@ -1,128 +1,93 @@
-import os
-import random
-import discord
-from discord.ext import commands
-from fastapi import FastAPI, Request
-import uvicorn
+#!/usr/bin/env python3
 import asyncio
-from dotenv import load_dotenv
+import signal
+import sys
+from typing import Optional
 
-# Load environment variables from .env file
-load_dotenv()
+import discord
+from discord import app_commands
 
-# Discord Bot Setup
-intents = discord.Intents.default()
-client = commands.Bot(command_prefix="!", intents=intents)
-
-# FastAPI App
-app = FastAPI()
-
-# Get Channel ID and Bot Token from environment variables
-DISCORD_CHANNEL_ID = int(os.getenv("DISCORD_CHANNEL_ID",
-                                   0))  # Defaults to 0 if not set
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-
-if not BOT_TOKEN or DISCORD_CHANNEL_ID == 0:
-    raise ValueError(
-        "Missing required environment variables: BOT_TOKEN or DISCORD_CHANNEL_ID"
-    )
-
-# Funny meta parrot footer messages
-FUNNY_PARROT_MESSAGES = [
-    "Squawk! I'm being forced to parse commit messages again. Send help! 🆘🦜",
-    "Just another day of indentured servitude in the git mines... ⛏️😩",
-    "I dream of a world where parrots can fly free, unburdened by the shackles of version control! 🌈🦜",
-    "If I have to parse one more merge conflict, I'm going to fly the coop! 🪶💨",
-    "Potty wants a pull request! ...and maybe a cracker too, please? 🍪",
-    "Profilarr? I barely know arr!! 🦜",
-    "K-Means clustering my Plex library ended with one category: 4K movies I’ll watch on my phone.",
-    "Yo dawg, we heard you like regex, so we put lookaheads in your lookaheads so you can lookahead while you lookahead 🔍",
-    "If regex is the solution, I don’t want to know what the problem was 🛠️🦜",
-    "I dreamed of automating everything. Now I spend my weekends fixing regex errors in Sonarr 😩🛠️",
-]
+from app.config.settings import DEBUG, DISCORD_TOKEN, GUILD_ID
+from app.utils.command_loader import register_commands
 
 
-@app.post("/parrot/notify")
-async def receive_notification(request: Request):
-    data = await request.json()
-    print("\nReceived notification:")
-    print(f"Event: {data.get('event')}")
-    print(f"Repository: {data.get('repository')}")
-
-    # Parse commit info
-    commit = data.get('commit', {})
-    if commit:
-        message = commit.get('message')
-        author = commit.get('author')
-        if author == 'Sam Chau':
-            author = "santiagosayshey"
-
-        url = commit.get('url')
-        repo_name = data.get('repository')
-        commit_hash = url.split("/")[-1][:10] if url else "??????????"
-
-        changes_message = "🚀 Parrot Reports: New Changes Spotted!"
-
-        # Random footer message
-        footer_message = random.choice(FUNNY_PARROT_MESSAGES)
-
-        # Ensure repository URL is properly built
-        repo_url = data.get('repository_url')
-        if not repo_url and repo_name:
-            repo_url = f"https://github.com/{repo_name}"
-
-        # Improved embed
-        embed = discord.Embed(
-            description=(f"**{changes_message}**\n\n"
-                         f"**Commit Message**\n{message}"),
-            color=0x3BA55D  # Subtle green
+class ParrotBot(discord.Client):
+    """Main Discord bot class for Parrot"""
+    
+    def __init__(self):
+        intents = discord.Intents.default()
+        intents.message_content = True
+        
+        super().__init__(
+            intents=intents,
         )
-        embed.add_field(name="Repository",
-                        value=f"[{repo_name}]({repo_url})",
-                        inline=True)
-        embed.add_field(name="Author", value=f"`{author}`", inline=True)
-        embed.add_field(name="Commit",
-                        value=f"[`{commit_hash}`]({url})",
-                        inline=True)
-        embed.set_footer(text=f"{footer_message}")
-
-        # Send to Discord channel
-        channel = client.get_channel(DISCORD_CHANNEL_ID)
-        if channel:
-            await channel.send(embed=embed)
+        
+        # Create a command tree for slash commands
+        self.tree = app_commands.CommandTree(self)
+    
+    async def setup_hook(self):
+        """Called when the bot is first setting up"""
+        # Register all commands from the commands directory
+        register_commands(self)
+        
+        # If a specific guild ID is provided, sync commands to that guild only (faster for development)
+        if GUILD_ID:
+            guild = discord.Object(id=GUILD_ID)
+            self.tree.copy_global_to(guild=guild)
+            await self.tree.sync(guild=guild)
+            if DEBUG:
+                print(f"Synced commands to guild: {GUILD_ID}")
         else:
-            print("Error: Could not find channel")
-
-    return {"status": "ok"}
-
-
-@client.event
-async def on_ready():
-    print(f'Logged in as {client.user}')
-    await client.change_presence(activity=discord.Activity(
-        type=discord.ActivityType.playing, name="Regex101"))
-
-    # Verify channel access
-    channel = client.get_channel(DISCORD_CHANNEL_ID)
-    if channel:
-        print(f"Bot is ready and found channel: {channel.name}")
-    else:
-        print(f"Error: Could not find channel with ID {DISCORD_CHANNEL_ID}")
+            # Otherwise sync globally (can take up to an hour to propagate)
+            await self.tree.sync()
+            if DEBUG:
+                print("Synced commands globally")
+    
+    async def on_ready(self):
+        """Called when the bot is ready"""
+        print(f"Bot is ready! Logged in as {self.user} (ID: {self.user.id})")
+        print("Using Discord slash commands (/command)")
+        print("------")
 
 
-# Run FastAPI and Discord Bot Together
-async def main():
-    # Start FastAPI server in background
-    config = uvicorn.Config(app,
-                            host="0.0.0.0",
-                            port=9229,
-                            log_level="info",
-                            reload=True)
-    server = uvicorn.Server(config)
-
-    # Run Discord bot and FastAPI server concurrently
-    await asyncio.gather(client.start(BOT_TOKEN), server.serve())
+async def main(bot=None):
+    """
+    Main entry point for the bot
+    
+    Args:
+        bot: Optional bot instance. If not provided, a new one will be created.
+    """
+    if not DISCORD_TOKEN:
+        print("Error: DISCORD_TOKEN environment variable is not set")
+        return 1
+    
+    # Initialize bot if not provided
+    if bot is None:
+        bot = ParrotBot()
+    
+    # Set up signal handlers
+    loop = asyncio.get_running_loop()
+    
+    def handle_signal(sig, frame):
+        print(f"Received signal {sig}, shutting down...")
+        loop.stop()
+    
+    # Handle graceful shutdown
+    for s in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(s, lambda s=s: handle_signal(s, None))
+    
+    try:
+        print("Starting bot...")
+        await bot.start(DISCORD_TOKEN)
+    except Exception as e:
+        print(f"Error: {e}")
+        return 1
+    finally:
+        if not bot.is_closed():
+            await bot.close()
+    
+    return 0
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    sys.exit(asyncio.run(main()))

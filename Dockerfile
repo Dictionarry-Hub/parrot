@@ -1,19 +1,24 @@
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy requirements first to leverage Docker cache
+# Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application
+# Copy application code
 COPY . .
 
-# Command to run the bot
-CMD ["python3", "bot.py"]
+# Make scripts executable
+RUN chmod +x /app/main.py /app/bot.py
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV API_RELOAD=false
+ENV DEBUG=false
+
+# Expose API port
+EXPOSE 8000
+
+# Run the application
+CMD ["python", "main.py"]

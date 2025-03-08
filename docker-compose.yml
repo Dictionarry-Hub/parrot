@@ -1,21 +1,18 @@
-version: "3"
+version: '3.8'
+
 services:
   parrot:
     build: .
     container_name: parrot-bot
-    restart: always
+    restart: unless-stopped
     ports:
-      - "9229:9229"
+      - "8000:8000"
     env_file:
       - .env
-    environment:
-      - DISCORD_CHANNEL_ID
-      - BOT_TOKEN
     volumes:
-      - .:/app
-    networks:
-      - parrot-net
-
-networks:
-  parrot-net:
-    driver: bridge
+      - ./logs:/app/logs
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_RELOAD=false
+      - DEBUG=false
