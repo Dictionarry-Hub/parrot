@@ -18,7 +18,7 @@ ENV API_RELOAD=false
 ENV DEBUG=false
 
 # Expose API port
-EXPOSE 8000
+EXPOSE 6007
 
 # Run the application
 CMD ["python", "main.py"]
