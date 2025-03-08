@@ -61,47 +61,49 @@ async def notify_release(notification: ReleaseNotification, request: Request):
     )
 
     try:
-        # Get repository name without org/owner
-        repo_parts = notification.repository.split('/')
-        repo_name = repo_parts[-1].capitalize()
-
-        # Create a Discord embed with darker green color
+        # Create a Discord embed with green color (same as commit - Sea Green)
         embed_color = 0x2E8B57  # Sea Green
-        embed = discord.Embed(color=embed_color,
-                              timestamp=notification.created_at)
+        embed = discord.Embed(color=embed_color)
 
         # Remove title field entirely
         embed.title = None
 
-        # Put the title in the description with h1 formatting
-        embed.description = f"## 🚀 Parrot Reports: New Changes Spotted!\n**{repo_name} {notification.version}**\n{notification.body}"
+        # Corrected header format with proper line breaks
+        display_version = f"v{notification.version}"
+        header = f"## 🚀 Parrot Reports: New Release Spotted!\n"
+        
+        if notification.name and notification.name != notification.version and notification.name != notification.tag_name:
+            header += f"**Release: {display_version} - {notification.name}**\n\n"
+        else:
+            header += f"**Release: {display_version}**\n\n"
+        
+        # Process the body to convert markdown headers to bold text
+        processed_body = notification.body
+        # Replace headers with bold text (e.g., "# Header" becomes "**Header**")
+        import re
+        processed_body = re.sub(r'#+ (.*?)(\n|$)', r'**\1**\2', processed_body)
+        
+        # Combine header and body
+        embed.description = header + processed_body
 
-        # If there's a release name, add it to the description
-        if notification.name and notification.name != notification.version:
-            embed.description = f"## 🚀 Parrot Reports: New Changes Spotted!\n**{repo_name} {notification.version} - {notification.name}**\n{notification.body}"
-
-        # Add metadata fields
-        embed.add_field(name="Version",
-                        value=notification.tag_name,
+        # Repository, authors, and version with bold headers stacked in the same style as commit endpoint
+        repo_url = f"https://github.com/{notification.repository}"
+        
+        # Create three separate fields in a single row for even spacing with proper formatting
+        embed.add_field(name="**Repository**",
+                        value=f"[{notification.repository}]({repo_url})",
                         inline=True)
 
-        if notification.prerelease:
-            embed.add_field(name="Type", value="🧪 Pre-release", inline=True)
-        else:
-            embed.add_field(name="Type", value="🚀 Release", inline=True)
-
         # Add authors
-        authors_text = ", ".join(
-            [author.name for author in notification.authors])
-        embed.add_field(name="Authors", value=authors_text, inline=False)
+        authors_text = ", ".join([author.name for author in notification.authors])
+        embed.add_field(name="**Authors**",
+                        value=f"`{authors_text}`",
+                        inline=True)
 
-        # Add links section
-        embed.add_field(name="Links",
-                        value=f"[View on GitHub]({notification.url})",
-                        inline=False)
-
-        # Set improved footer
-        embed.set_footer(text=f"Parrot Bot • {notification.repository}")
+        # Add version with inline code and link to the release
+        embed.add_field(name="**Release**",
+                        value=f"[`{display_version}`]({notification.url})",
+                        inline=True)
 
         # For now, send to the test channel as specified
         channel = "test"  # Use the test channel from your .env file
@@ -163,7 +165,6 @@ async def notify_release(notification: ReleaseNotification, request: Request):
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500,
                             detail=f"Failed to send notification: {str(e)}")
-
 
 @router.post("/commit")
 async def notify_commit(notification: CommitNotification, request: Request):
