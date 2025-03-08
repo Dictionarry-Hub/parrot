@@ -24,23 +24,44 @@ jobs:
               return;
             }
 
-            // Get commit metadata
+            // Calculate changed files with null checking
+            let changedFiles = 0;
+            if (commit.added && Array.isArray(commit.added)) {
+              changedFiles += commit.added.length;
+            }
+            if (commit.modified && Array.isArray(commit.modified)) {
+              changedFiles += commit.modified.length;
+            }
+            if (commit.removed && Array.isArray(commit.removed)) {
+              changedFiles += commit.removed.length;
+            }
+
+            // Handle the message body safely
+            let messageBody = null;
+            if (commit.message && commit.message.includes('\n\n')) {
+              messageBody = commit.message.substring(commit.message.indexOf('\n\n') + 2);
+            }
+
+            // Format the first line of the commit message
+            const messageTitle = commit.message ? commit.message.split('\n')[0] : '';
+
+            // Get commit metadata with safe fallbacks
             const commitData = {
               repository: `${owner}/${repo}`,
               branch: branch,
               commit_hash: commit.id,
-              message: commit.message.split('\n')[0], // First line of commit message
-              body: commit.message.includes('\n\n') ? commit.message.substring(commit.message.indexOf('\n\n') + 2) : null,
-              url: commit.url,
-              created_at: commit.timestamp,
+              message: messageTitle,
+              body: messageBody,
+              url: commit.url || `https://github.com/${owner}/${repo}/commit/${commit.id}`,
+              created_at: commit.timestamp || new Date().toISOString(),
               author: {
-                name: commit.author.name,
-                email: commit.author.email,
-                username: commit.author.username
+                name: commit.author ? commit.author.name : 'Unknown',
+                email: commit.author && commit.author.email ? commit.author.email : null,
+                username: commit.author && commit.author.username ? commit.author.username : null
               },
-              changed_files: commit.added.length + commit.modified.length + commit.removed.length,
-              additions: null, // GitHub doesn't provide this in the webhook payload
-              deletions: null  // GitHub doesn't provide this in the webhook payload
+              changed_files: changedFiles,
+              additions: null,
+              deletions: null
             };
 
             core.setOutput('commit_data', JSON.stringify(commitData));
