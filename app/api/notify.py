@@ -6,7 +6,9 @@ import discord
 import logging
 import traceback
 import asyncio
+import re
 from app.config.settings import get_channel_id, DISCORD_TOKEN
+from app.utils.parse_author import parse_author_name
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -80,7 +82,6 @@ async def notify_release(notification: ReleaseNotification, request: Request):
         # Process the body to convert markdown headers to bold text
         processed_body = notification.body
         # Replace headers with bold text (e.g., "# Header" becomes "**Header**")
-        import re
         processed_body = re.sub(r'#+ (.*?)(\n|$)', r'**\1**\2', processed_body)
         
         # Combine header and body
@@ -94,8 +95,9 @@ async def notify_release(notification: ReleaseNotification, request: Request):
                         value=f"[{notification.repository}]({repo_url})",
                         inline=True)
 
-        # Add authors
-        authors_text = ", ".join([author.name for author in notification.authors])
+        # Add authors with name parsing
+        parsed_authors = [parse_author_name(author.name) for author in notification.authors]
+        authors_text = ", ".join(parsed_authors)
         embed.add_field(name="**Authors**",
                         value=f"`{authors_text}`",
                         inline=True)
@@ -202,7 +204,9 @@ async def notify_commit(notification: CommitNotification, request: Request):
         # Repository, author, and commit hash with bold headers stacked
         repo_url = f"https://github.com/{notification.repository}"
         commit_url = notification.url
-        author_info = notification.author.name
+        
+        # Parse author name with the utility function
+        author_info = parse_author_name(notification.author.name)
 
         # Create three separate fields in a single row for even spacing with proper formatting
         embed.add_field(name="**Repository**",
