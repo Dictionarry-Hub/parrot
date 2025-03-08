@@ -9,6 +9,7 @@ import asyncio
 import re
 from app.config.settings import get_channel_id, DISCORD_TOKEN
 from app.utils.parse_author import parse_author_name
+from app.utils.funny_footers import get_random_footer
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -63,14 +64,12 @@ async def notify_release(notification: ReleaseNotification, request: Request):
     )
 
     try:
-        # Create a Discord embed with green color (same as commit - Sea Green)
+        # Create a Discord embed with green color
         embed_color = 0x2E8B57  # Sea Green
         embed = discord.Embed(color=embed_color)
-
-        # Remove title field entirely
         embed.title = None
 
-        # Corrected header format with proper line breaks
+        # Format header with version and name
         display_version = f"v{notification.version}"
         header = f"## 🚀 Parrot Reports: New Release Spotted!\n"
         
@@ -81,16 +80,15 @@ async def notify_release(notification: ReleaseNotification, request: Request):
         
         # Process the body to convert markdown headers to bold text
         processed_body = notification.body
-        # Replace headers with bold text (e.g., "# Header" becomes "**Header**")
         processed_body = re.sub(r'#+ (.*?)(\n|$)', r'**\1**\2', processed_body)
         
         # Combine header and body
         embed.description = header + processed_body
 
-        # Repository, authors, and version with bold headers stacked in the same style as commit endpoint
+        # Repository URL
         repo_url = f"https://github.com/{notification.repository}"
         
-        # Create three separate fields in a single row for even spacing with proper formatting
+        # Create fields for repository, authors, and version
         embed.add_field(name="**Repository**",
                         value=f"[{notification.repository}]({repo_url})",
                         inline=True)
@@ -102,12 +100,16 @@ async def notify_release(notification: ReleaseNotification, request: Request):
                         value=f"`{authors_text}`",
                         inline=True)
 
-        # Add version with inline code and link to the release
+        # Add version with link
         embed.add_field(name="**Release**",
                         value=f"[`{display_version}`]({notification.url})",
                         inline=True)
 
-        # Select the appropriate channel based on DEBUG mode
+        # Add funny footer with parrot emoji
+        footer_text = f"🦜 {get_random_footer()}"
+        embed.set_footer(text=footer_text)
+
+        # Select channel based on environment
         from app.config.settings import DEBUG
         if DEBUG:
             channel = "test"
@@ -116,7 +118,7 @@ async def notify_release(notification: ReleaseNotification, request: Request):
             channel = "announcements"
             logger.debug(f"Production mode, using announcements channel")
 
-        # Get the channel ID
+        # Get channel ID
         logger.debug(f"Getting channel ID for '{channel}'")
         channel_id = get_channel_id(channel)
         logger.debug(f"Channel ID: {channel_id}")
@@ -126,7 +128,7 @@ async def notify_release(notification: ReleaseNotification, request: Request):
             raise HTTPException(status_code=500,
                                 detail=f"Channel '{channel}' not configured")
 
-        # Create a fresh Discord client just for this request
+        # Create Discord client
         logger.debug("Creating a new Discord client")
         client = discord.Client(intents=discord.Intents.default())
 
@@ -150,7 +152,6 @@ async def notify_release(notification: ReleaseNotification, request: Request):
         # Send the embed
         logger.debug("Sending embed to Discord")
         try:
-            # Send a visually distinct embed that will stand out
             await discord_channel.send(embed=embed)
             logger.info(
                 f"Successfully sent notification for {notification.repository} {notification.version} to {channel} channel"
@@ -174,6 +175,7 @@ async def notify_release(notification: ReleaseNotification, request: Request):
         raise HTTPException(status_code=500,
                             detail=f"Failed to send notification: {str(e)}")
 
+
 @router.post("/commit")
 async def notify_commit(notification: CommitNotification, request: Request):
     """
@@ -184,37 +186,31 @@ async def notify_commit(notification: CommitNotification, request: Request):
     )
 
     try:
-        # Create short commit hash for display (now 10 characters instead of 7)
+        # Create short commit hash for display
         short_hash = notification.commit_hash[:10]
-
-        # Keep the full repository path for display (owner/repo)
         repo_display = notification.repository
 
-        # Create a Discord embed with green color (same as release - Sea Green)
+        # Create Discord embed
         embed_color = 0x2E8B57  # Sea Green
         embed = discord.Embed(color=embed_color)
-
-        # Remove title field entirely
         embed.title = None
 
-        # Put the title in the description with h3 formatting and rocket symbol
+        # Format description with commit message
         embed.description = f"🚀 **Parrot Reports: New Commit Spotted!**"
-
-        # Add commit message with 'Commit Message' label but no emphasis
         embed.description += f"\n\n**Commit Message**\n{notification.message}"
 
-        # Add commit body if available with proper separation
+        # Add commit body if available
         if notification.body:
             embed.description += f"\n\n{notification.body}"
 
-        # Repository, author, and commit hash with bold headers stacked
+        # Setup URLs
         repo_url = f"https://github.com/{notification.repository}"
         commit_url = notification.url
         
-        # Parse author name with the utility function
+        # Parse author name
         author_info = parse_author_name(notification.author.name)
 
-        # Create three separate fields in a single row for even spacing with proper formatting
+        # Add fields for repository, author, and commit
         embed.add_field(name="**Repository**",
                         value=f"[{repo_display}]({repo_url})",
                         inline=True)
@@ -227,7 +223,11 @@ async def notify_commit(notification: CommitNotification, request: Request):
                         value=f"[`{short_hash}`]({commit_url})",
                         inline=True)
 
-        # Select the appropriate channel based on DEBUG mode
+        # Add funny footer with parrot emoji
+        footer_text = f"🦜 {get_random_footer()}"
+        embed.set_footer(text=footer_text)
+
+        # Select channel based on environment
         from app.config.settings import DEBUG
         if DEBUG:
             channel = "test"
@@ -236,7 +236,7 @@ async def notify_commit(notification: CommitNotification, request: Request):
             channel = "announcements"
             logger.debug(f"Production mode, using announcements channel")
 
-        # Get the channel ID
+        # Get channel ID
         logger.debug(f"Getting channel ID for '{channel}'")
         channel_id = get_channel_id(channel)
         logger.debug(f"Channel ID: {channel_id}")
@@ -246,7 +246,7 @@ async def notify_commit(notification: CommitNotification, request: Request):
             raise HTTPException(status_code=500,
                                 detail=f"Channel '{channel}' not configured")
 
-        # Create a fresh Discord client just for this request
+        # Create Discord client
         logger.debug("Creating a new Discord client")
         client = discord.Client(intents=discord.Intents.default())
 
@@ -270,7 +270,6 @@ async def notify_commit(notification: CommitNotification, request: Request):
         # Send the embed
         logger.debug("Sending embed to Discord")
         try:
-            # Send a visually distinct embed that will stand out
             await discord_channel.send(embed=embed)
             logger.info(
                 f"Successfully sent notification for {notification.repository} commit {short_hash} to {channel} channel"
