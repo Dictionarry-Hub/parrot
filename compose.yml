@@ -1,0 +1,13 @@
+services:
+  parrot:
+    image: ghcr.io/dictionarry-hub/parrot:latest
+    container_name: parrot
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+    volumes:
+      - parrot-logs:/app/logs
+
+volumes:
+  parrot-logs:
