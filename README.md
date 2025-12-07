@@ -2,6 +2,12 @@
 
 Discord bot for Dictionarry.
 
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `/wizard` | Get a link to the Dictionarry profile wizard |
+
 ## Development
 
 ### Setup
@@ -73,15 +79,10 @@ const events = [ready];
 
 ## Production
 
-### Docker
-
 ```bash
-docker login ghcr.io -u YOUR_GITHUB_USERNAME
-docker compose pull
-docker compose up -d
+npm run build
+npm run prod
 ```
-
-Logs are persisted in the `parrot-logs` volume.
 
 ### Environment Variables
 

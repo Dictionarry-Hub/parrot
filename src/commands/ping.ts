@@ -1,8 +1,10 @@
+import { SlashCommandBuilder } from "discord.js";
 import { Command } from "../types";
 
 export const command: Command = {
-  name: "ping",
-  description: "Replies with pong",
+  data: new SlashCommandBuilder()
+    .setName("ping")
+    .setDescription("Replies with pong"),
   execute: async (interaction) => {
     await interaction.reply("Pong!");
   },

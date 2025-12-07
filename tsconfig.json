@@ -7,7 +7,9 @@
     "rootDir": "./src",
     "baseUrl": "./src",
     "paths": {
-      "@logger": ["./utils/logger"]
+      "@logger": ["./utils/logger"],
+      "@remarks": ["./utils/remarks"],
+      "@channel": ["./utils/channel"]
     },
     "strict": true,
     "esModuleInterop": true,

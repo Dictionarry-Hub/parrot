@@ -1,10 +1,11 @@
 import "dotenv/config";
-import { Client, GatewayIntentBits } from "discord.js";
+import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { registerEvents } from "./events";
 import { registerCommands } from "./commands";
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
+  partials: [Partials.GuildMember],
 });
 
 registerEvents(client);
