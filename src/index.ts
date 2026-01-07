@@ -2,6 +2,7 @@ import "dotenv/config";
 import { Client, GatewayIntentBits, Partials } from "discord.js";
 import { registerEvents } from "./events";
 import { registerCommands } from "./commands";
+import { startServer } from "./server";
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
@@ -10,6 +11,10 @@ const client = new Client({
 
 registerEvents(client);
 registerCommands(client);
+
+client.once("clientReady", () => {
+  startServer(client);
+});
 
 const token =
   process.env.NODE_ENV === "production"

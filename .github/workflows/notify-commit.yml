@@ -1,0 +1,55 @@
+name: Notify Commit
+
+on:
+  workflow_call:
+    secrets:
+      PARROT_URL:
+        required: true
+      PARROT_CHANNEL:
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send commit notification to Parrot
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const branch = context.ref.replace('refs/heads/', '');
+            const commits = context.payload.commits || [];
+
+            if (commits.length === 0) {
+              console.log('No commits found in payload');
+              return;
+            }
+
+            const payload = {
+              type: 'changelog',
+              channel: '${{ secrets.PARROT_CHANNEL }}',
+              data: {
+                repo: `${owner}/${repo}`,
+                branch: branch,
+                author: commits[0].author?.username || commits[0].author?.name || 'unknown',
+                commits: commits.map(c => ({
+                  message: c.message.split('\n')[0],
+                  sha: c.id,
+                  author: c.author?.username || c.author?.name || 'unknown',
+                  url: c.url
+                }))
+              }
+            };
+
+            const response = await fetch('${{ secrets.PARROT_URL }}/webhook', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+              const text = await response.text();
+              core.setFailed(`Failed to notify Parrot: ${response.status} ${text}`);
+            } else {
+              console.log('Parrot notified successfully');
+            }
