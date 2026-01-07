@@ -3,10 +3,11 @@ import { Command } from "../types";
 import { logger } from "@logger";
 import { command as ping } from "./ping";
 import { command as wizard } from "./wizard";
+import { command as hater } from "./hater";
 
 export const commands = new Collection<string, Command>();
 
-[ping, wizard].forEach((cmd) => {
+[ping, wizard, hater].forEach((cmd) => {
   commands.set(cmd.data.name, cmd);
 });
 
