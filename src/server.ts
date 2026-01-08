@@ -5,6 +5,11 @@ import { WebhookPayload } from "./types";
 import { getHandler } from "./webhooks";
 import { logger } from "@logger";
 
+const channelMap: Record<string, string | undefined> = {
+  changelog: process.env.CHANGELOG,
+  rebuild: process.env.REBUILD,
+};
+
 export function startServer(client: Client) {
   const app = new Hono();
 
@@ -12,7 +17,12 @@ export function startServer(client: Client) {
     try {
       const payload: WebhookPayload = await c.req.json();
 
-      const channel = client.channels.cache.get(payload.channel);
+      const channelId = channelMap[payload.type];
+      if (!channelId) {
+        return c.json({ error: "No channel configured for this type" }, 400);
+      }
+
+      const channel = client.channels.cache.get(channelId);
       if (!channel || !(channel instanceof TextChannel)) {
         return c.json({ error: "Channel not found" }, 404);
       }

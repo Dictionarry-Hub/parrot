@@ -27,7 +27,6 @@ export interface Commit {
 
 export interface ChangelogPayload {
   type: "changelog";
-  channel: string;
   data: {
     repo: string;
     branch: string;
@@ -38,7 +37,6 @@ export interface ChangelogPayload {
 
 export interface RebuildPayload {
   type: "rebuild";
-  channel: string;
   data: {
     service: string;
     success: boolean;
