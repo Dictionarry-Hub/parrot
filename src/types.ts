@@ -4,11 +4,13 @@ import {
   ClientEvents,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
+  AutocompleteInteraction,
 } from "discord.js";
 
 export interface Command {
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
   execute: (interaction: ChatInputCommandInteraction) => Promise<void>;
+  autocomplete?: (interaction: AutocompleteInteraction) => Promise<void>;
 }
 
 export interface Event<K extends keyof ClientEvents = keyof ClientEvents> {

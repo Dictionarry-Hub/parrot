@@ -4,10 +4,12 @@ import { logger } from "@logger";
 import { command as ping } from "./ping";
 import { command as wizard } from "./wizard";
 import { command as hater } from "./hater";
+import { command as profile } from "./profile";
+import { command as format } from "./format";
 
 export const commands = new Collection<string, Command>();
 
-[ping, wizard, hater].forEach((cmd) => {
+[ping, wizard, hater, profile, format].forEach((cmd) => {
   commands.set(cmd.data.name, cmd);
 });
 
@@ -28,6 +30,14 @@ export function registerCommands(client: Client) {
   });
 
   client.on("interactionCreate", async (interaction) => {
+    if (interaction.isAutocomplete()) {
+      const command = commands.get(interaction.commandName);
+      if (command?.autocomplete) {
+        await command.autocomplete(interaction);
+      }
+      return;
+    }
+
     if (!interaction.isChatInputCommand()) return;
 
     const command = commands.get(interaction.commandName);
