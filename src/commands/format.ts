@@ -25,7 +25,7 @@ async function fetchFormatList(): Promise<string[]> {
   }
 
   const res = await fetch(GITHUB_API);
-  const files = await res.json();
+  const files = await res.json() as { name: string }[];
   formatCache = files
     .filter((f: { name: string }) => f.name.endsWith(".yml"))
     .map((f: { name: string }) => f.name.replace(".yml", ""));
