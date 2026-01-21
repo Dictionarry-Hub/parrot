@@ -2,7 +2,7 @@ name: Notify
 on:
   push:
     branches:
-      - '**''
+      - '**'
 jobs:
   call-notify-commit:
     uses: Dictionarry-Hub/parrot/.github/workflows/notify-commit.yml@v1
