@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import path from "path";
 
-const opinions: Record<string, { use: string; instead: string; message?: string }> = {
+const opinions: Record<string, { use: string; instead: string; message?: string; image?: string }> = {
   plex: {
     use: "Plex",
     instead: "Jellyfin",
