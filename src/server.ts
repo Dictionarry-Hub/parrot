@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
+import { serveStatic } from "@hono/node-server/serve-static";
 import { Client, TextChannel } from "discord.js";
 import { WebhookPayload } from "./types";
 import { getHandler } from "./webhooks";
@@ -12,6 +13,8 @@ const channelMap: Record<string, string | undefined> = {
 
 export function startServer(client: Client) {
   const app = new Hono();
+
+  app.use("/public/*", serveStatic({ root: "./" }));
 
   app.post("/webhook", async (c) => {
     try {
