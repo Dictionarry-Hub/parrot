@@ -6,10 +6,11 @@ import { command as wizard } from "./wizard";
 import { command as hater } from "./hater";
 import { command as profile } from "./profile";
 import { command as format } from "./format";
+import { command as support, handleSupportModal, isSupportModal } from "./support";
 
 export const commands = new Collection<string, Command>();
 
-[ping, wizard, hater, profile, format].forEach((cmd) => {
+[ping, wizard, hater, profile, format, support].forEach((cmd) => {
   commands.set(cmd.data.name, cmd);
 });
 
@@ -30,6 +31,7 @@ export function registerCommands(client: Client) {
   });
 
   client.on("interactionCreate", async (interaction) => {
+    // Handle autocomplete
     if (interaction.isAutocomplete()) {
       const command = commands.get(interaction.commandName);
       if (command?.autocomplete) {
@@ -38,6 +40,15 @@ export function registerCommands(client: Client) {
       return;
     }
 
+    // Handle modal submissions
+    if (interaction.isModalSubmit()) {
+      if (isSupportModal(interaction.customId)) {
+        await handleSupportModal(interaction);
+      }
+      return;
+    }
+
+    // Handle slash commands
     if (!interaction.isChatInputCommand()) return;
 
     const command = commands.get(interaction.commandName);

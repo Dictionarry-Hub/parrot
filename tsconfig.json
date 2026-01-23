@@ -9,7 +9,9 @@
     "paths": {
       "@logger": ["./utils/logger"],
       "@remarks": ["./utils/remarks"],
-      "@channel": ["./utils/channel"]
+      "@channel": ["./utils/channel"],
+      "@carrier": ["./carrier"],
+      "@carrier/*": ["./carrier/*"]
     },
     "strict": true,
     "esModuleInterop": true,

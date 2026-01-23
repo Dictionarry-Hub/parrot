@@ -3,3 +3,12 @@ dist/
 .env
 logs/
 *.log
+
+# Carrier database
+carrier.db
+carrier.db-wal
+carrier.db-shm
+
+# ngrok
+ngrok
+ngrok-v3-stable-linux-amd64.tgz

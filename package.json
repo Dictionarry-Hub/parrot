@@ -22,12 +22,14 @@
   "homepage": "https://github.com/Dictionarry-Hub/parrot#readme",
   "dependencies": {
     "@hono/node-server": "^1.19.6",
+    "better-sqlite3": "^12.6.2",
     "discord.js": "^14.25.1",
     "dotenv": "^17.2.3",
     "hono": "^4.10.7",
     "yaml": "^2.8.2"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.10.1",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",

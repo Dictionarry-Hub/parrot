@@ -4,6 +4,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { Client, TextChannel } from "discord.js";
 import { WebhookPayload } from "./types";
 import { getHandler } from "./webhooks";
+import { handleGitHubWebhook, GitHubWebhookPayload } from "./webhooks/github";
 import { logger } from "@logger";
 
 const channelMap: Record<string, string | undefined> = {
@@ -42,6 +43,25 @@ export function startServer(client: Client) {
     } catch (error) {
       logger.error("Webhook error", { error });
       return c.json({ error: "Invalid payload" }, 400);
+    }
+  });
+
+  // GitHub webhook endpoint for Carrier sync
+  app.post("/webhook/github", async (c) => {
+    try {
+      const event = c.req.header("X-GitHub-Event");
+      if (!event) {
+        return c.json({ error: "Missing X-GitHub-Event header" }, 400);
+      }
+
+      const payload: GitHubWebhookPayload = await c.req.json();
+      await handleGitHubWebhook(client, payload, event);
+
+      logger.info("GitHub webhook handled", { event });
+      return c.json({ success: true });
+    } catch (error) {
+      logger.error("GitHub webhook error", { error });
+      return c.json({ error: "Failed to process webhook" }, 500);
     }
   });
 

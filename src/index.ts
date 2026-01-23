@@ -5,8 +5,13 @@ import { registerCommands } from "./commands";
 import { startServer } from "./server";
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
-  partials: [Partials.GuildMember],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+  partials: [Partials.GuildMember, Partials.Message],
 });
 
 registerEvents(client);
