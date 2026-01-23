@@ -181,10 +181,9 @@ async function handleTypeSelection(interaction: ButtonInteraction): Promise<void
   if (type === "docs") {
     const embed = new EmbedBuilder()
       .setTitle("📚 Documentation")
-      .setDescription(
-        `Check out the documentation at:\n\n**[${DOCS_URL}](${DOCS_URL})**\n\nMost common questions are answered there!`
-      )
-      .setColor(0x5865f2);
+      .setURL(DOCS_URL)
+      .setDescription("Check out the documentation - most common questions are answered there!")
+      .setColor(0x57f287);
 
     await interaction.update({
       embeds: [embed],
