@@ -2,11 +2,17 @@ import { EmbedBuilder, TextChannel } from "discord.js";
 import { ChangelogPayload } from "../types";
 import { getRandomRemark } from "@remarks";
 
+const authorDisplayNames: Record<string, string> = {
+  xshatterx: "Seraphys",
+  "Sam Chau": "santiagosayshey",
+};
+
 export async function handleChangelog(
   payload: ChangelogPayload,
   channel: TextChannel
 ): Promise<void> {
   const { repo, author, commits } = payload.data;
+  const displayAuthor = authorDisplayNames[author] ?? author;
 
   const commitList = commits
     .map((c) => {
@@ -25,7 +31,7 @@ export async function handleChangelog(
     .addFields(
       { name: "Repository", value: `[\`${repo}\`](${repoUrl})`, inline: true },
       { name: "Branch", value: `[\`${payload.data.branch}\`](${repoUrl}/tree/${payload.data.branch})`, inline: true },
-      { name: "Author", value: `[\`${author}\`](https://github.com/${author})`, inline: true }
+      { name: "Author", value: `[\`${displayAuthor}\`](https://github.com/${author})`, inline: true }
     )
     .setFooter({ text: getRandomRemark() })
     .setTimestamp();
