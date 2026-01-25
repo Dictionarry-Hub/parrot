@@ -133,6 +133,7 @@ All prefix commands use `!` as the prefix.
 | `!anime` | Anime info |
 | `!coc` | Code of Conduct |
 | `!dv` | Dolby Vision & HDR explanation |
+| `!trick` | Ask the parrot to do a trick |
 
 ## Adding Commands
 

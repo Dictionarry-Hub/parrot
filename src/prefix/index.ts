@@ -24,3 +24,4 @@ import "./github";
 import "./support";
 import "./coc";
 import "./dv";
+import "./trick";
