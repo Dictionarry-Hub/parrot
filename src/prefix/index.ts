@@ -22,3 +22,5 @@ import "./propers";
 import "./docs";
 import "./github";
 import "./support";
+import "./coc";
+import "./dv";

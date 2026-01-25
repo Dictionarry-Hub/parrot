@@ -1,6 +1,6 @@
 # Parrot
 
-Discord bot for Dictionarry that bridges Discord and GitHub for seamless issue tracking and community support.
+Discord bot for Dictionarry that bridges Discord and GitHub for issue tracking and community support.
 
 ## Features
 
@@ -131,6 +131,8 @@ All prefix commands use `!` as the prefix.
 | `!quality` | Quality info |
 | `!propers` | Propers info |
 | `!anime` | Anime info |
+| `!coc` | Code of Conduct |
+| `!dv` | Dolby Vision & HDR explanation |
 
 ## Adding Commands
 
