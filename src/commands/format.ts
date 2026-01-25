@@ -41,7 +41,7 @@ async function fetchFormat(name: string): Promise<CustomFormat | null> {
 }
 
 function toSlug(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, "-");
+  return name.toLowerCase().replace(/[()]/g, "").replace(/\s+/g, "-");
 }
 
 export const command = {

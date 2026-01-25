@@ -41,7 +41,7 @@ async function fetchProfile(name: string): Promise<Profile | null> {
 }
 
 function toSlug(name: string): string {
-  return name.toLowerCase().replace(/\s+/g, "-");
+  return name.toLowerCase().replace(/[()]/g, "").replace(/\s+/g, "-");
 }
 
 export const command = {
