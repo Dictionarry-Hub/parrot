@@ -25,3 +25,4 @@ import "./support";
 import "./coc";
 import "./dv";
 import "./trick";
+import "./delay";
