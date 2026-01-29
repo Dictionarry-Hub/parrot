@@ -27,6 +27,8 @@ const refusals = [
   "Come back when your Plex library isn't 90% CAM rips.",
   "I would, but your torrent client is still on 1.0 ratio. Embarrassing.",
   "Tricks are for people who don't ask 'what's a custom format?' in 2025.",
+  "I'm not performing for someone who thinks 'Any' is a quality profile.",
+  "The last time I turned a trick it was your mother, and now it burns when I pee."
 ];
 
 const tricks = [
