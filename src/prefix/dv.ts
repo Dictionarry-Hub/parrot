@@ -9,7 +9,7 @@ registerPrefixCommand({
       .setTitle("Dolby Vision & HDR")
       .setDescription(
         `**What is Dolby Vision?**
-Dolby Vision is an HDR format that uses dynamic metadata—adjusting brightness and color on a scene-by-scene (or even frame-by-frame) basis, unlike HDR10's static metadata that applies to the entire film.
+Dolby Vision is an HDR format that uses dynamic metadata; adjusting brightness and color on a scene-by-scene (or even frame-by-frame) basis, unlike HDR10's static metadata that applies to the entire film.
 
 **The Layer System**
 Dolby Vision uses different "profiles" depending on the source:
