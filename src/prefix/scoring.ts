@@ -19,7 +19,7 @@ To see this in action, try running a search:
 \`Nosferatu 2024 REPACK3 2160p MA WEB-DL DDP 5.1 Atmos DV HDR H.265-FLUX\`
 → Score: **+391,108**
 
-The release contains h265 and still scores positively. The custom format is only targeting h265 in resolutions where it doesn't make sense, not h265 as a whole.`
+The release contains h265 and still scores positively. The custom format is only targeting h265 in resolutions where it's detrimental, not h265 as a whole.`
       )
       .setColor(0x57f287);
 
