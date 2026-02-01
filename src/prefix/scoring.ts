@@ -8,20 +8,18 @@ registerPrefixCommand({
     const embed = new EmbedBuilder()
       .setTitle("Custom Format Scoring")
       .setDescription(
-        `**You can't look at a single custom format in isolation.**
-Profiles are built holistically. Custom formats and their scores **combine** to achieve a result. Looking at one CF's name and score without understanding its regex and conditions will mislead you.
+        `**How Custom Format Scoring Works**
+Custom formats don't work in isolation. Profiles are built holistically, where custom formats and their scores **combine** to achieve a result. To understand what a custom format actually does, you need to look at its regex and conditions, not just its name and score.
 
 **Example: h265**
-The most common version of this: people see an "H265" custom format scored at \`-999999\` and assume the profile doesn't want h265 content. That's wrong.
+A common point of confusion is the "H265" custom format being scored at \`-999999\`. At first glance, it looks like the profile is trying to avoid h265 content entirely. But if you open up that custom format and look at its **conditions**, you'll see it negates 1080p and 2160p. This means it only applies to h265 content when the resolution is not 1080p or 2160p.
 
-If you actually open that custom format and look at its **conditions**, you'll see it negates 1080p and 2160p.
-
-Run an actual search and see for yourself:
+To see this in action, try running a search:
 
 \`Nosferatu 2024 REPACK3 2160p MA WEB-DL DDP 5.1 Atmos DV HDR H.265-FLUX\`
-→ Score: **+391,108**: h265 is right there in the name.
+→ Score: **+391,108**
 
-The profile isn't banning h265, it's banning h265 in resolutions we don't want it.`
+The release contains h265 and still scores positively. The custom format is only targeting h265 in resolutions where it doesn't make sense, not h265 as a whole.`
       )
       .setColor(0x57f287);
 
