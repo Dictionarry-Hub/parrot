@@ -65,12 +65,15 @@ export function startServer(client: Client) {
       const payload: WebhookPayload = await c.req.json();
 
       const channelId = channelMap[payload.type];
+      logger.debug("Webhook received", { type: payload.type, channelId, cacheSize: client.channels.cache.size });
+
       if (!channelId) {
         return c.json({ error: "No channel configured for this type" }, 400);
       }
 
       const channel = client.channels.cache.get(channelId);
       if (!channel || !(channel instanceof TextChannel)) {
+        logger.warn("Channel not found in cache", { channelId, found: !!channel, isTextChannel: channel instanceof TextChannel });
         return c.json({ error: "Channel not found" }, 404);
       }
 
