@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import { registerPrefixCommand } from "./registry";
 
 const ALLOWED_USERS = ["santiagosayshey"];
@@ -35,9 +35,11 @@ registerPrefixCommand({
       (m) => !m.user.bot && !m.roles.cache.has(roleId)
     );
 
-    await message.channel.send(
-      `Found ${needsRole.size} members without the ${role.name} role. Assigning now...`
-    );
+    if (message.channel instanceof TextChannel) {
+      await message.channel.send(
+        `Found ${needsRole.size} members without the ${role.name} role. Assigning now...`
+      );
+    }
 
     let assigned = 0;
     let failed = 0;
@@ -46,7 +48,7 @@ registerPrefixCommand({
       try {
         await member.roles.add(role);
         assigned++;
-        if (assigned % 50 === 0) {
+        if (assigned % 50 === 0 && message.channel instanceof TextChannel) {
           await message.channel.send(
             `Progress: ${assigned}/${needsRole.size}`
           );
@@ -58,8 +60,10 @@ registerPrefixCommand({
       await new Promise((r) => setTimeout(r, 1000));
     }
 
-    await message.channel.send(
-      `Done. Assigned ${role.name} to ${assigned} members. ${failed > 0 ? `Failed: ${failed}.` : ""}`
-    );
+    if (message.channel instanceof TextChannel) {
+      await message.channel.send(
+        `Done. Assigned ${role.name} to ${assigned} members. ${failed > 0 ? `Failed: ${failed}.` : ""}`
+      );
+    }
   },
 });

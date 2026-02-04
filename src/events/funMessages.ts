@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 import { Event } from "../types";
 
 let messageCount = 0;
@@ -53,7 +53,9 @@ export const event: Event<"messageCreate"> = {
     messageCount++;
     if (messageCount >= 500) {
       messageCount = 0;
-      await message.channel.send(getRandomItem(FUNNY_REMARKS));
+      if (message.channel instanceof TextChannel) {
+        await message.channel.send(getRandomItem(FUNNY_REMARKS));
+      }
     }
   },
 };

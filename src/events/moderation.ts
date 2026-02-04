@@ -1,4 +1,4 @@
-import { Message, EmbedBuilder } from "discord.js";
+import { Message, EmbedBuilder, TextChannel } from "discord.js";
 import { Event } from "../types";
 import { staffLog } from "@staffLog";
 import { addStrike, resetStrikes } from "@carrier/db";
@@ -250,10 +250,12 @@ export const event: Event<"messageCreate"> = {
         .setColor(0xfee75c)
         .setTimestamp();
 
-      try {
-        await message.channel.send({ embeds: [embed] });
-      } catch {
-        // Channel might not allow messages
+      if (message.channel instanceof TextChannel) {
+        try {
+          await message.channel.send({ embeds: [embed] });
+        } catch {
+          // Channel might not allow messages
+        }
       }
 
       staffLog(client, {

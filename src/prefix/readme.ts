@@ -1,4 +1,4 @@
-import { Message, EmbedBuilder } from "discord.js";
+import { Message, EmbedBuilder, TextChannel } from "discord.js";
 import { registerPrefixCommand } from "./registry";
 import { getChannel } from "@channel";
 
@@ -19,7 +19,9 @@ registerPrefixCommand({
     const readmeChannel = getChannel(message.client, isDev ? process.env.DEV : process.env.README);
 
     if (!readmeChannel) {
-      await message.channel.send("README channel not configured.");
+      if (message.channel instanceof TextChannel) {
+        await message.channel.send("README channel not configured.");
+      }
       return;
     }
 
