@@ -1,6 +1,5 @@
 import { Client } from "discord.js";
 import { event as ready } from "./ready";
-import { event as userJoined } from "./userJoined";
 import { event as userLeft } from "./userLeft";
 import { event as forumMessage } from "./forumMessage";
 import { event as threadUpdate } from "./threadUpdate";
@@ -13,7 +12,7 @@ import { event as funMessages } from "./funMessages";
 // Load prefix commands
 import "../prefix";
 
-const events = [ready, userJoined, userLeft, forumMessage, threadUpdate, prefixCommand, reactionAdd, reactionRemove, moderation, funMessages];
+const events = [ready, userLeft, forumMessage, threadUpdate, prefixCommand, reactionAdd, reactionRemove, moderation, funMessages];
 
 export function registerEvents(client: Client) {
   events.forEach((event) => {

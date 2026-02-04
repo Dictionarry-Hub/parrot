@@ -27,6 +27,4 @@ import "./dv";
 import "./trick";
 import "./delay";
 import "./scoring";
-import "./welcome";
 import "./readme";
-import "./assignall"
