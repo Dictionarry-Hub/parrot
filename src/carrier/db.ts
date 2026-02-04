@@ -46,6 +46,12 @@ function initSchema(): void {
 
     CREATE INDEX IF NOT EXISTS idx_github ON sync(github_repo, github_issue_number);
     CREATE INDEX IF NOT EXISTS idx_discord ON sync(discord_thread_id);
+
+    CREATE TABLE IF NOT EXISTS strikes (
+      user_id TEXT PRIMARY KEY,
+      count INTEGER NOT NULL DEFAULT 0,
+      last_violation_at INTEGER
+    );
   `);
 }
 
@@ -109,4 +115,31 @@ export function closeDb(): void {
     db.close();
     db = null;
   }
+}
+
+// Strikes
+export function getStrikes(userId: string): number {
+  const db = getDb();
+  const stmt = db.prepare("SELECT count FROM strikes WHERE user_id = ?");
+  const row = stmt.get(userId) as { count: number } | undefined;
+  return row?.count ?? 0;
+}
+
+export function addStrike(userId: string): number {
+  const db = getDb();
+  const stmt = db.prepare(`
+    INSERT INTO strikes (user_id, count, last_violation_at)
+    VALUES (?, 1, ?)
+    ON CONFLICT(user_id) DO UPDATE SET
+      count = count + 1,
+      last_violation_at = excluded.last_violation_at
+  `);
+  stmt.run(userId, Date.now());
+  return getStrikes(userId);
+}
+
+export function resetStrikes(userId: string): void {
+  const db = getDb();
+  const stmt = db.prepare("DELETE FROM strikes WHERE user_id = ?");
+  stmt.run(userId);
 }

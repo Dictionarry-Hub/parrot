@@ -5,7 +5,7 @@ registerPrefixCommand({
   name: "help",
   description: "List all available commands",
   execute: async (message: Message) => {
-    const commands = getAllPrefixCommands();
+    const commands = getAllPrefixCommands().sort((a, b) => a.name.localeCompare(b.name));
 
     const embed = new EmbedBuilder()
       .setTitle("Commands")

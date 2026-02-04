@@ -24,7 +24,7 @@ export const event: Event<"guildMemberRemove"> = {
       guild: member.guild.name,
     });
 
-    const channel = getChannel(client, process.env.LEAVE);
+    const channel = getChannel(client, process.env.STAFF_LOG);
     if (channel) {
       const joinedAt = member.joinedAt;
       const duration = joinedAt

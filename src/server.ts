@@ -7,6 +7,27 @@ import { getHandler } from "./webhooks";
 import { handleGitHubWebhook, GitHubWebhookPayload } from "./webhooks/github";
 import { logger } from "@logger";
 import { createHmac, timingSafeEqual } from "crypto";
+import { createServer } from "net";
+
+function isPortAvailable(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const server = createServer();
+    server.once("error", () => resolve(false));
+    server.once("listening", () => {
+      server.close();
+      resolve(true);
+    });
+    server.listen(port);
+  });
+}
+
+async function findAvailablePort(startPort: number): Promise<number> {
+  let port = startPort;
+  while (!(await isPortAvailable(port))) {
+    port++;
+  }
+  return port;
+}
 
 function verifyGitHubSignature(payload: string, signature: string | undefined): boolean {
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
@@ -31,7 +52,7 @@ function verifyGitHubSignature(payload: string, signature: string | undefined): 
 
 const channelMap: Record<string, string | undefined> = {
   changelog: process.env.CHANGELOG,
-  rebuild: process.env.REBUILD,
+  rebuild: process.env.STAFF_LOG,
 };
 
 export function startServer(client: Client) {
@@ -96,7 +117,9 @@ export function startServer(client: Client) {
     }
   });
 
-  const port = Number(process.env.PORT) || 3000;
-  serve({ fetch: app.fetch, port });
-  logger.info(`Server running on port ${port}`);
+  const basePort = Number(process.env.PORT) || 3000;
+  findAvailablePort(basePort).then((port) => {
+    serve({ fetch: app.fetch, port });
+    logger.info(`Server running on port ${port}`);
+  });
 }
