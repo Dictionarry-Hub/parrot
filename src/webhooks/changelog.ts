@@ -1,4 +1,4 @@
-import { EmbedBuilder, TextChannel } from "discord.js";
+import { EmbedBuilder, NewsChannel } from "discord.js";
 import { ChangelogPayload } from "../types";
 import { getRandomRemark } from "@remarks";
 
@@ -9,7 +9,7 @@ const authorDisplayNames: Record<string, string> = {
 
 export async function handleChangelog(
   payload: ChangelogPayload,
-  channel: TextChannel
+  channel: NewsChannel
 ): Promise<void> {
   const { repo, author, commits } = payload.data;
   const displayAuthor = authorDisplayNames[author] ?? author;

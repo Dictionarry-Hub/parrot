@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
-import { Client, TextChannel } from "discord.js";
+import { Client, NewsChannel } from "discord.js";
 import { WebhookPayload } from "./types";
 import { getHandler } from "./webhooks";
 import { handleGitHubWebhook, GitHubWebhookPayload } from "./webhooks/github";
@@ -72,8 +72,8 @@ export function startServer(client: Client) {
       }
 
       const channel = client.channels.cache.get(channelId);
-      if (!channel || !(channel instanceof TextChannel)) {
-        logger.warn("Channel not found in cache", { channelId, found: !!channel, isTextChannel: channel instanceof TextChannel });
+      if (!channel || !(channel instanceof NewsChannel)) {
+        logger.warn("Channel not found in cache", { channelId, found: !!channel });
         return c.json({ error: "Channel not found" }, 404);
       }
 

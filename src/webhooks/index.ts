@@ -1,9 +1,9 @@
-import { TextChannel } from "discord.js";
+import { NewsChannel } from "discord.js";
 import { WebhookPayload } from "../types";
 import { handleChangelog } from "./changelog";
 import { handleRebuild } from "./rebuild";
 
-type Handler = (payload: WebhookPayload, channel: TextChannel) => Promise<void>;
+type Handler = (payload: WebhookPayload, channel: NewsChannel) => Promise<void>;
 
 const handlers: Record<string, Handler> = {
   changelog: handleChangelog as Handler,

@@ -1,9 +1,9 @@
-import { EmbedBuilder, TextChannel } from "discord.js";
+import { EmbedBuilder, NewsChannel } from "discord.js";
 import { RebuildPayload } from "../types";
 
 export async function handleRebuild(
   payload: RebuildPayload,
-  channel: TextChannel
+  channel: NewsChannel
 ): Promise<void> {
   const { service, success, duration, error } = payload.data;
 
