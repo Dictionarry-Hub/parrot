@@ -109,7 +109,7 @@ function checkViolation(content: string): { type: ViolationType; matched: string
 
   // Check derogatory first (most serious)
   for (const term of DEROGATORY) {
-    if (lower.includes(term)) {
+    if (new RegExp(`\\b${term}\\b`).test(lower)) {
       return { type: "derogatory", matched: term };
     }
   }
@@ -120,14 +120,14 @@ function checkViolation(content: string): { type: ViolationType; matched: string
 
   // Tracker + invite = violation
   for (const tracker of TRACKERS) {
-    if (lower.includes(tracker)) {
+    if (new RegExp(`\\b${tracker}\\b`).test(lower)) {
       return { type: "tracker_invite", matched: tracker };
     }
   }
 
   // Usenet + invite = violation
   for (const term of USENET) {
-    if (lower.includes(term)) {
+    if (new RegExp(`\\b${term}\\b`).test(lower)) {
       return { type: "usenet_invite", matched: term };
     }
   }
