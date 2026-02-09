@@ -3,7 +3,7 @@ import { Event } from "../types";
 import { staffLog } from "@staffLog";
 import { addStrike, resetStrikes } from "@carrier/db";
 
-const IMMUNE_USERS = ["santiagosayshey", "seraphys"];
+const IMMUNE_USERS = ["santiagosayshey", "seraphys", "delavicci"];
 
 // Private trackers
 const TRACKERS = [
@@ -90,8 +90,6 @@ const DEROGATORY = [
   "nigga",
   "faggot",
   "fag",
-  "retard",
-  "retarded",
   "tranny",
   "kike",
   "spic",
