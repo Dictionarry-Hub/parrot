@@ -8,11 +8,12 @@ import { event as reactionAdd } from "./reactionAdd";
 import { event as reactionRemove } from "./reactionRemove";
 import { event as moderation } from "./moderation";
 import { event as funMessages } from "./funMessages";
+import { event as autoResponse } from "./autoResponse";
 
 // Load prefix commands
 import "../prefix";
 
-const events = [ready, userLeft, forumMessage, threadUpdate, prefixCommand, reactionAdd, reactionRemove, moderation, funMessages];
+const events = [ready, userLeft, forumMessage, threadUpdate, prefixCommand, reactionAdd, reactionRemove, moderation, funMessages, autoResponse];
 
 export function registerEvents(client: Client) {
   events.forEach((event) => {
