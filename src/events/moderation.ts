@@ -3,7 +3,11 @@ import { Event } from "../types";
 import { staffLog } from "@staffLog";
 import { addStrike, resetStrikes } from "@carrier/db";
 
-const IMMUNE_USERS = ["santiagosayshey", "seraphys", "delavicci"];
+const IMMUNE_USERS = ["santiagosayshey", "seraphys", "delavicci", "sfusion2", "ba11in0nabudget", "screamz1988", "raaphh11"];
+
+const EXEMPT_CHANNELS = [
+  "1441513522784895067",
+];
 
 // Private trackers
 const TRACKERS = [
@@ -148,6 +152,7 @@ export const event: Event<"messageCreate"> = {
     if (message.author.bot) return;
     if (!message.guild) return;
     if (!message.deletable) return;
+    if (EXEMPT_CHANNELS.includes(message.channelId)) return;
 
     const violation = checkViolation(message.content);
     if (!violation) return;
