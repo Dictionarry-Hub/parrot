@@ -8,13 +8,19 @@ export function languageEmbed() {
     )
     .addFields(
       {
-        name: "Single Language User",
-        value: "Go to the language tab within the profile to change it.",
+        name: "Single Original Language User",
+        value:
+          "You want releases from a single original language. Go to the language tab within the profile to change it.",
       },
       {
-        name: "Multiple Language User",
+        name: "Multiple Original Language User",
         value:
-          "Set the language to **Simple** and **Any**. Then create custom formats for your desired languages, add them to the profile, and set scores.",
+          "You want releases from more than one original language. Set the language to **Simple** and **Any**. Then create custom formats for your desired languages, add them to the profile, and set scores.",
+      },
+      {
+        name: "Multi-Language User",
+        value:
+          "You want releases with dubbed languages. The Dictionary Database does not support multi-language releases (i.e. dubbed releases).",
       }
     )
     .setFooter({ text: "Note: Original language in CF conditions is coming soon" })
