@@ -1,29 +1,30 @@
 import { Message, EmbedBuilder } from "discord.js";
 import { registerPrefixCommand } from "./registry";
 
-const ANNOUNCEMENT_URL =
-  "https://discord.com/channels/1202375791556431892/1202377457760477286/1438618983816237207";
-
 registerPrefixCommand({
   name: "beta",
-  description: "Instructions for switching to the beta container",
+  description: "Info about the Profilarr V2 closed beta",
   execute: async (message: Message) => {
     const embed = new EmbedBuilder()
-      .setTitle("Switching to Beta")
-      .setURL(ANNOUNCEMENT_URL)
+      .setTitle("Profilarr V2 Beta")
       .setDescription(
-        "Due to cache issues in the stable container, we recommend switching to beta for now."
+        "V1 is on a feature freeze- all development effort is going into V2, a ground-up rewrite. V2 is currently in **closed beta**."
       )
-      .addFields({
-        name: "Steps",
-        value: [
-          "1. Change `latest` to `beta` in your compose",
-          "2. Pull the new image",
-          "3. Unlink the database and remove all local files",
-          "4. Restart Profilarr",
-          "5. Relink the database and resync",
-        ].join("\n"),
-      })
+      .addFields(
+        {
+          name: "Highlights",
+          value: [
+            "- Multiple database support",
+            "- Improved merge conflict handling",
+            "- Automated upgrades & renames",
+          ].join("\n"),
+        },
+        {
+          name: "How to Join",
+          value:
+            "Spots are limited and on a rolling basis. Priority is given to active members and those willing to stress-test merge conflicts. DM **Seraphys** with how you think you can help.",
+        }
+      )
       .setColor(0x57f287);
 
     await message.reply({ embeds: [embed] });
