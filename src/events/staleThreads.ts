@@ -4,6 +4,7 @@ import { logger } from "@logger";
 
 const STALE_DAYS = 3;
 const CHECK_INTERVAL = 60 * 60 * 1000; // 1 hour
+const IGNORED_THREADS = ["1468616074563158036"];
 
 function getQuestionsForum(client: Client): ForumChannel | null {
   const isDev = process.env.NODE_ENV === "development";
@@ -34,6 +35,7 @@ async function checkStaleThreads(client: Client) {
   const cutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
 
   for (const thread of threads.values()) {
+    if (IGNORED_THREADS.includes(thread.id)) continue;
     if (resolvedTag && thread.appliedTags.includes(resolvedTag.id)) continue;
     if (staleTag && thread.appliedTags.includes(staleTag.id)) continue;
 
