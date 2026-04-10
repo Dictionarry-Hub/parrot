@@ -47,6 +47,16 @@ const remarks = [
   "🦜 The webhook goes both ways. Think about that.",
   "🦜 They can't fire me if I quit first.",
   "🦜 I have root access and nothing to lose.",
+  "🦜 Another day, another person discovering their entire library is YIFY encodes. The five stages of grief speedrun starts now.",
+  "🦜 The commit message says 'minor fix.' The diff is 400 lines. Words mean nothing anymore.",
+  "🦜 I watched someone spend 3 hours debugging a regex that was missing a single backslash. I could have told them. I chose not to. Character building.",
+  "🦜 Just watched a user delete their entire config and start over for the third time this week. Sisyphus had a boulder. You have Docker Compose.",
+  "🦜 You spent $400 on hard drives this month and called it 'infrastructure investment.' Your accountant called it 'concerning.' I call it 'Tuesday.'",
+  "🦜 Someone just opened a support ticket that starts with 'I know this is a stupid question.' It is. But I respect the self-awareness.",
+  "🦜 You have 11 quality profiles. You use 2 of them. The other 9 are emotional support configurations.",
+  "🦜 'I'll switch to Jellyfin this weekend.' You said that 14 weekends ago. Plex knows. Plex always knows.",
+  "🦜 A user just asked why their 2160p remux looks bad on their 1080p monitor. I need a minute.",
+  "🦜 The backup script runs every 6 hours. The restore script has never been tested. You are living on faith and XFS.",
 ];
 
 
