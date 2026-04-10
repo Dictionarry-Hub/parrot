@@ -7,10 +7,11 @@ import { command as hater } from "./hater";
 import { command as profile } from "./profile";
 import { command as format } from "./format";
 import { command as support, handleSupportModal, isSupportModal } from "./support";
+import { command as respond } from "./respond";
 
 export const commands = new Collection<string, Command>();
 
-[ping, wizard, hater, profile, format, support].forEach((cmd) => {
+[ping, wizard, hater, profile, format, support, respond].forEach((cmd) => {
   commands.set(cmd.data.name, cmd);
 });
 
