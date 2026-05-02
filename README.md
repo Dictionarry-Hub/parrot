@@ -122,7 +122,6 @@ All prefix commands use `!` as the prefix.
 | `!support` | Support request info |
 | `!docs` | Documentation links |
 | `!github` | GitHub links |
-| `!beta` | Beta program info |
 | `!donate` | Donation info |
 | `!setup` | Setup guide |
 | `!sync` | Sync info |

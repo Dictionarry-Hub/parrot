@@ -9,7 +9,6 @@ export {
 // Load all commands
 import "./ping";
 import "./help";
-import "./beta";
 import "./anime";
 import "./donate";
 import "./setup";
