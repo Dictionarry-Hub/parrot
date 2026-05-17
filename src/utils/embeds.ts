@@ -27,6 +27,5 @@ export function languageEmbed() {
           "German and French profiles are currently in progress in our [TRaSH PCD port](https://github.com/Dictionarry-Hub/trash-pcd). Follow that repo for updates.",
       }
     )
-    .setFooter({ text: "Note: Original language in CF conditions is coming soon" })
     .setColor(0x57f287);
 }
