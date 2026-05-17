@@ -1,5 +1,4 @@
 import { EmbedBuilder } from "discord.js";
-
 export function languageEmbed() {
   return new EmbedBuilder()
     .setTitle("Language Settings")
@@ -20,7 +19,12 @@ export function languageEmbed() {
       {
         name: "Multi-Language User",
         value:
-          "You want releases with dubbed languages. The Dictionary Database does not support multi-language releases (i.e. dubbed releases).",
+          "You want releases with dubbed languages. The Dictionarry Database does not support multi-language releases (i.e. dubbed releases).",
+      },
+      {
+        name: "German & French Users",
+        value:
+          "German and French profiles are currently in progress in our [TRaSH PCD port](https://github.com/Dictionarry-Hub/trash-pcd). Follow that repo for updates.",
       }
     )
     .setFooter({ text: "Note: Original language in CF conditions is coming soon" })
