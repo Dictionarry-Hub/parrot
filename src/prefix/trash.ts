@@ -5,7 +5,7 @@ registerPrefixCommand({
   description: "Info about the TRaSH PCD database",
   execute: async (message: Message) => {
     const embed = new EmbedBuilder()
-      .setTitle("TRaSH PCD Database")
+      .setTitle("TRaSH Guides")
       .setURL("https://github.com/Dictionarry-Hub/trash-pcd")
       .setDescription(
         "A port of the [TRaSH guides](https://trash-guides.info/) in PCD format, ready to link as a database in Profilarr."
