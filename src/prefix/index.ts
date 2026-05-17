@@ -28,3 +28,4 @@ import "./delay";
 import "./scoring";
 import "./readme";
 import "./indexers";
+import "./trash";
