@@ -7,7 +7,7 @@ registerPrefixCommand({
   execute: async (message: Message) => {
     const embed = new EmbedBuilder()
       .setTitle("Documentation")
-      .setURL("https://dictionarry.dev")
+      .setURL("https://v2.dictionarry.dev")
       .setDescription(
         "Visit our documentation for guides, setup instructions, and profile information."
       )
