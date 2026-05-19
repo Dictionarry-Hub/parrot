@@ -1,0 +1,89 @@
+name: Notify Release
+
+on:
+  workflow_call:
+    secrets:
+      PARROT_URL:
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Send release notification to Parrot
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { execFileSync } = require('node:child_process');
+
+            const { owner, repo } = context.repo;
+            const ref = context.ref;
+
+            if (!ref.startsWith('refs/tags/')) {
+              core.setFailed(`Release notifications require a tag ref, got ${ref}`);
+              return;
+            }
+
+            const version = ref.replace('refs/tags/', '');
+            const repoName = `${owner}/${repo}`;
+            const repoUrl = `https://github.com/${repoName}`;
+
+            const git = (args) => execFileSync('git', args, { encoding: 'utf8' }).trim();
+            git(['fetch', '--tags', '--force']);
+
+            const tags = git([
+              'tag',
+              '--merged',
+              version,
+              '--sort=-version:refname',
+              '--list',
+              'v[0-9]*.[0-9]*.[0-9]*',
+            ]).split('\n').filter(Boolean);
+
+            const previousVersion = tags.find((tag) => tag !== version);
+            const range = previousVersion ? `${previousVersion}..${version}` : version;
+            const compareUrl = previousVersion
+              ? `${repoUrl}/compare/${previousVersion}...${version}`
+              : undefined;
+
+            const log = git(['log', '--format=%H%x1f%s%x1f%an', range]);
+            const commits = log
+              ? log.split('\n').map((line) => {
+                  const [sha, message, author] = line.split('\x1f');
+                  return {
+                    message,
+                    sha,
+                    author,
+                    url: `${repoUrl}/commit/${sha}`,
+                  };
+                })
+              : [];
+
+            const payload = {
+              type: 'release',
+              data: {
+                repo: repoName,
+                version,
+                previousVersion,
+                compareUrl,
+                releaseUrl: `${repoUrl}/releases/tag/${version}`,
+                commits,
+              },
+            };
+
+            const response = await fetch('${{ secrets.PARROT_URL }}/webhook', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+              const text = await response.text();
+              core.setFailed(`Failed to notify Parrot: ${response.status} ${text}`);
+            } else {
+              console.log('Parrot notified successfully');
+            }

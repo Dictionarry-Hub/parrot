@@ -37,6 +37,18 @@ export interface ChangelogPayload {
   };
 }
 
+export interface ReleasePayload {
+  type: "release";
+  data: {
+    repo: string;
+    version: string;
+    previousVersion?: string;
+    compareUrl?: string;
+    releaseUrl: string;
+    commits: Commit[];
+  };
+}
+
 export interface RebuildPayload {
   type: "rebuild";
   data: {
@@ -47,4 +59,4 @@ export interface RebuildPayload {
   };
 }
 
-export type WebhookPayload = ChangelogPayload | RebuildPayload;
+export type WebhookPayload = ChangelogPayload | ReleasePayload | RebuildPayload;
