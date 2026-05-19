@@ -52,6 +52,7 @@ function verifyGitHubSignature(payload: string, signature: string | undefined): 
 
 const channelMap: Record<string, string | undefined> = {
   changelog: process.env.CHANGELOG,
+  release: process.env.CHANGELOG,
   rebuild: process.env.STAFF_LOG,
 };
 

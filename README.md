@@ -7,7 +7,7 @@ Discord bot for Dictionarry that bridges Discord and GitHub for issue tracking a
 - **Two-way GitHub sync** - Forum threads sync with GitHub issues, comments flow both directions
 - **Support request workflow** - Multi-step modal flow for creating issues across repos
 - **Multi-repo support** - Handles profilarr, database, and website repositories
-- **Webhook handling** - GitHub signature verification, changelog notifications, rebuild status
+- **Webhook handling** - GitHub signature verification, changelog notifications, release notifications, rebuild status
 - **Dual command systems** - Both slash commands (`/support`) and prefix commands (`!help`)
 
 ## Tech Stack
@@ -219,7 +219,7 @@ The bot runs an HTTP server (default port 3000) that handles:
 
 | Endpoint | Purpose |
 |----------|---------|
-| `/webhook` | General webhooks (changelog, rebuild) |
+| `/webhook` | General webhooks (changelog, release, rebuild) |
 | `/webhook/github` | GitHub webhooks (issue comments, state changes) |
 
 Configure GitHub webhooks to point to `https://your-domain/webhook/github` with the secret matching `GITHUB_WEBHOOK_SECRET`.
